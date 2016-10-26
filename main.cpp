@@ -1,18 +1,18 @@
 #include <QCoreApplication>
 #include <QtXml/qdom.h>
-#include "loaddata.h"
+#include "DataProcessor.h"
 #include <iostream>
 #include <ctime>
 #include <QFile>
 #include <QXmlStreamReader>
 #include <vector>
 #include <QString>
-#include "airport.h"
+#include "Airport.h"
 #include "constnumber.h"
 #include <cctype>
 
 using namespace std;
-airport matrix[matrixSize];
+Airport matrix[matrixSize];
 string airlines[totalAirlines] = {};
 
 void reLoadData(char *airportFrom, char *airportTo, char *routeFrom, char *routeTo);

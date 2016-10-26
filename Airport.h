@@ -6,14 +6,19 @@
 #include <cmath>
 #include "constnumber.h"
 #include <stdio.h>
+const double radiusOfEarth = 3959;// (6,371 km)
+const double PI = 3.1415926;
+const int matrixSize = 9542;
+const double maxD = 2 * PI * radiusOfEarth;
+const int totalAirlines = 19846;
 
 using namespace std;
-class airport{
+class Airport{
 public:
-    airport();
+    Airport();
     void set(int _id, string _name, string _city, string _country, double _latitude, double _lontitude);
     void addDest(int airportID, int distance, int _ID);
-    int distance(airport dest);
+    int distance(Airport dest);
     string info();
     int numberOfDestinations();
     void to(int i, int &d, int &id, int &airID);
@@ -35,54 +40,54 @@ private:
     vector<int> available_airline;
 };
 
-airport::airport()
+Airport::Airport()
 {
     shortest = preShortest = ID = 0; name = string(); city = string(); country = string();
 }
 
-void airport::set(int _id, string _name, string _city, string _country, double _latitude, double _lontitude)
+void Airport::set(int _id, string _name, string _city, string _country, double _latitude, double _lontitude)
 {
     ID = _id; name = _name; city = _city; country = _country; latitude = _latitude; lontitude = _lontitude;
 }
 
-void airport::addDest(int airportID, int distance, int _ID)
+void Airport::addDest(int airportID, int distance, int _ID)
 {
     destID.push_back(airportID);
     dist.push_back(distance);
     airlineID.push_back(_ID);
 }
 
-int airport::distance(airport dest)
+int Airport::distance(Airport dest)
 {
     return radiusOfEarth
            * acos(sin(latitude*PI/180)*sin( dest.latitude*PI/180 )
                 + cos( latitude*PI/180 )*cos( dest.latitude*PI/180 )*cos( abs(dest.lontitude-lontitude) * PI/180) ) ;
 }
 
-string airport::info()
+string Airport::info()
 {
     string temp = name + "(" + city+ ")";
     return temp;
 }
 
-int airport::numberOfDestinations()
+int Airport::numberOfDestinations()
 {
     return destID.size();
 }
 
-void airport::to(int i, int &d, int &id, int &_airID)
+void Airport::to(int i, int &d, int &id, int &_airID)
 {
     id = destID[i];
     d = dist[i];
     _airID = airlineID[i];
 }
 
-int& airport::from()
+int& Airport::from()
 {
     return shortest;
 }
 
-void airport::theAirID(int id)
+void Airport::theAirID(int id)
 {
     if(preShortest!=shortest){
         available_airline.clear();
@@ -93,7 +98,7 @@ void airport::theAirID(int id)
     available_airline.push_back(id);
 }
 
-string airport::showAvailibleAirlines(string airlines[])
+string Airport::showAvailibleAirlines(string airlines[])
 {
     string temp = airlines[available_airline[0]];
     for(int i = 1; i < available_airline.size(); ++i)
@@ -103,7 +108,7 @@ string airport::showAvailibleAirlines(string airlines[])
     return temp;
 }
 
-string airport::theName()
+string Airport::theName()
 {
     return name;
 }

@@ -9,7 +9,7 @@
 #include <fstream>
 #include <stdio.h>
 #include <cstring>
-#include "airport.h"
+#include "Airport.h"
 
 using namespace std;
 
@@ -112,7 +112,7 @@ void readAirlines(string airlines[], char *input)
     }
 }
 
-void readRoutes(airport list[], char *input)
+void readRoutes(Airport list[], char *input)
 {
     short source, dest, airlineID;
     //open dom file
@@ -151,7 +151,7 @@ void readRoutes(airport list[], char *input)
     }
 }
 
-void readAirport(airport list[], char *input)
+void readAirport(Airport list[], char *input)
 {
     node *A;
     int id;
