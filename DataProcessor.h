@@ -18,6 +18,10 @@ struct node{
     int id;
 };
 
+
+
+// ==========================================================================================   OLD FUNCTIONS
+
 vector<node*> airporList;
 
 void airport2xml(char *input, char *output)
@@ -145,7 +149,7 @@ void readRoutes(Airport list[], char *input)
             routeElement = routeElement.nextSiblingElement("airlineID");
             airlineID = routeElement.text().toShort();
             if(source && dest)
-                list[source].addDest(dest, list[source].distance(list[dest]), airlineID);
+                list[source].addDestination(dest, list[source].getDistanceTo(list[dest]), airlineID);
 
         }
     }
