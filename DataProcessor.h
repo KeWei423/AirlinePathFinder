@@ -20,6 +20,7 @@ struct node{
 
 class DataProcessor {
 public:
+
     DataProcessor(char *_airportDataFilename ="airports.dat",
                   char *_airportXmlFilename = "airports.xml",
                   char *_routeDataFilename = "routes.dat",
@@ -37,35 +38,41 @@ private:
     char *airportXmlFilename;
     char *routeDataFilename;
     char *routeXmlFilename;
-
-    // ==========================================================================================   OLD FUNCTIONS
-    vector<node*> airporList;
-    void readAirlines(string airlines[], char *input)
-    {
-        ifstream in(input);
-        char buffer[200], delimiter[2] = {'"', ','}, *airlineID, *name;
-        while(!in.eof())
-        {
-            in.getline(buffer, 200);
-            airlineID = strtok(buffer, delimiter);
-            name = strtok(NULL, delimiter);//company name
-            airlines[atoi(airlineID)] = name;
-        }
-    }
-
-    int name2number(string name){
-        int size = airporList.size();
-        for(int i = 0; i < size; ++i)
-            if(airporList[i]->name == name)
-                return airporList[i]->id;
-        return false;
-    }
-    // ==========================================================================================   Class FUNCTIONS
 };
 
-#endif // LOADDATA
 
-DataProcessor::DataProcessor(char *_airportDataFilename, char *_airportXmlFilename, char *_routeDataFilename, char *_routeXmlFilename)
+// ==========================================================================================   OLD FUNCTIONS
+
+vector<node*> airporList;
+
+void readAirlines(string airlines[], char *input)
+{
+    ifstream in(input);
+    char buffer[200], delimiter[2] = {'"', ','}, *airlineID, *name;
+    while(!in.eof())
+    {
+        in.getline(buffer, 200);
+        airlineID = strtok(buffer, delimiter);
+        name = strtok(NULL, delimiter);//company name
+        airlines[atoi(airlineID)] = name;
+    }
+}
+
+int name2number(string name){
+    int size = airporList.size();
+    for(int i = 0; i < size; ++i)
+        if(airporList[i]->name == name)
+            return airporList[i]->id;
+    return false;
+}
+#endif // LOADDATA
+// ==========================================================================================   Class FUNCTIONS
+
+
+DataProcessor::DataProcessor(char *_airportDataFilename,
+                             char *_airportXmlFilename,
+                             char *_routeDataFilename,
+                             char *_routeXmlFilename)
 {
     airportDataFilename = _airportDataFilename;
     airportXmlFilename = _airportXmlFilename;

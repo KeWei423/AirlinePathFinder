@@ -24,10 +24,7 @@ DataProcessor dp;
 int main()
 {
     dp.reloadData();
-
-    reLoadData("airports.dat", "airports.xml", "routes.dat", "routes.xml");
-    dp.getAirports(matrix);
-    readAirlines(airlines, "airlines.dat");
+    dp.getAirports(matrix);    
     int A,B;
     while(getInput(A, B)){
         findPath(A, B);
@@ -35,11 +32,6 @@ int main()
     }
     cout << "END of PROGRAM" << endl;
     return 0;
-}
-
-void reLoadData(char *airportFrom, char *airportTo, char *routeFrom, char *routeTo)
-{
-    dp.reloadData();
 }
 
 void findPath(int start, int end)
