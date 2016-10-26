@@ -19,11 +19,14 @@ void findPath(int A, int B);
 void showPath(int A, int B);
 bool getInput(int &source, int &dest);
 
+DataProcessor dp;
+
 int main()
 {
+    dp.reloadData();
+
     reLoadData("airports.dat", "airports.xml", "routes.dat", "routes.xml");
-    readAirport(matrix, "airports.xml");
-    readRoutes(matrix, "routes.xml");
+    dp.getAirports(matrix);
     readAirlines(airlines, "airlines.dat");
     int A,B;
     while(getInput(A, B)){
@@ -36,8 +39,7 @@ int main()
 
 void reLoadData(char *airportFrom, char *airportTo, char *routeFrom, char *routeTo)
 {
-    airport2xml(airportFrom, airportTo);
-    routes2xml(routeFrom, routeTo);
+    dp.reloadData();
 }
 
 void findPath(int start, int end)

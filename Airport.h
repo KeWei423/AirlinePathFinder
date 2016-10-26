@@ -23,6 +23,7 @@ public:
     int getDistanceTo(Airport dest);
     string getAirportInfo();
     void addDestination(int airportID, int getDistanceTo, int _ID);
+
     void operator =(const Airport& other);
 
 
