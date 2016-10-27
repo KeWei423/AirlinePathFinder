@@ -1,40 +1,34 @@
 #ifndef PATHFINDER_H
 #define PATHFINDER_H
 
+#include <iostream>
+#include "DataProcessor.h"
+using namespace std;
+
 class PathFinder {
 public:
     PathFinder();
 
     void findPath(int from, int to);
+    void findPath(string from, string to);
 
-    // ====================== TODO: REMOVE
-    void oldFindPath(int start, int end);
-    void oldShowPath(int A, int B);
+    int nameToID(string name);
 
 private:
     DataProcessor dp;
-    Airport matrix[SIZE];
+    Airport* matrix;
     string airlines[TOTAL_AIRLINES] = {};
 };
-
-
 
 #endif // PATHFINDER_H
 
 PathFinder::PathFinder()
 {
     dp.reloadData();
-    dp.getAirports(matrix);
-    readAirlines(airlines, "airlines.dat");
+    matrix = dp.getAirports();
 }
 
-void PathFinder::findPath(int from, int to)
-{
-    oldFindPath(from, to);
-    oldShowPath(from, to);
-}
-
-void PathFinder::oldFindPath(int start, int end)
+void PathFinder::findPath(int start, int end)
 {
     int minDistance[SIZE], visited[SIZE];
     int d, id, pre, airlineID, holder = start;
@@ -75,10 +69,8 @@ void PathFinder::oldFindPath(int start, int end)
     }
     cout << endl << "Shortest flight distance from " << matrix[holder].getAirportInfo() <<" to " << matrix[end].getAirportInfo() << " is " << minDistance[end] << endl << endl;
 
-}
-
-void PathFinder::oldShowPath(int A, int B)
-{
+    // ==================================================
+    int A = start, B = end;
     int walker = 0, last;
     vector<int> route;
     route.push_back(B);
@@ -98,4 +90,11 @@ void PathFinder::oldShowPath(int A, int B)
     }
     cout << "Arrive  at " << matrix[route[0]].getAirportInfo();
     cout << endl << endl;
+}
+
+void PathFinder::findPath(string from, string to)
+{
+    int start = dp.getAirportIdFor(from), end = dp.getAirportIdFor(to);
+    cout << start << " => " << end << endl;
+//    findPath(start, end);
 }

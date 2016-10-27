@@ -1,10 +1,10 @@
 #ifndef AIRPORT
 #define AIRPORT
+#include <cmath>
 #include <iostream>
+#include <stdio.h>
 #include <string>
 #include <vector>
-#include <cmath>
-#include <stdio.h>
 
 const double EARTH_RADIUS = 3959;// (6,371 km)
 const double PI = 3.1415926;
@@ -17,7 +17,7 @@ class Airport{
 public:
     Airport();
     Airport(const Airport& other);
-    Airport(int _id, string _name, string _city, string _country, double _latitude, double _lontitude);
+    Airport(int _id, string _name, string _city, double _latitude, double _lontitude);
 
     int getDestinationCount();
     int getDistanceTo(Airport dest);
@@ -30,9 +30,6 @@ public:
     // TODO: clean up needed functions
     string showAvailibleAirlines(string airlines[]);
     string getAirportName();
-    // REMOVE THIS FUNCTION
-    void set(int _id, string _name, string _city, string _country, double _latitude, double _lontitude);
-
     void to(int i, int &d, int &id, int &airID);
     int& from();
     void theAirID(int id);
@@ -41,7 +38,7 @@ private:
     void copy(const Airport& other);
 
     int ID;
-    string name, city, country;
+    string name, city;
     double latitude, lontitude;
     //edges
     vector<int> destinationAirports;
@@ -53,7 +50,7 @@ private:
     vector<int> available_airline;
 };
 
-Airport::Airport(): shortest(), name(), city(), country()
+Airport::Airport()
 {
     shortest = preShortest = ID = 0;
 }
@@ -63,12 +60,11 @@ Airport::Airport(const Airport &other)
     copy(other);
 }
 
-Airport::Airport(int _id, string _name, string _city, string _country, double _latitude, double _lontitude)
+Airport::Airport(int _id, string _name, string _city, double _latitude, double _lontitude)
 {
     ID = _id;
     name = _name;
     city = _city;
-    country = _country;
     latitude = _latitude;
     lontitude = _lontitude;
 }
@@ -76,16 +72,6 @@ Airport::Airport(int _id, string _name, string _city, string _country, double _l
 void Airport::operator =(const Airport &other)
 {
     copy(other);
-}
-
-void Airport::set(int _id, string _name, string _city, string _country, double _latitude, double _lontitude)
-{
-    ID = _id;
-    name = _name;
-    city = _city;
-    country = _country;
-    latitude = _latitude;
-    lontitude = _lontitude;
 }
 
 void Airport::addDestination(int airportID, int _distance, int _ID)
@@ -140,7 +126,6 @@ void Airport::copy(const Airport &other)
     ID = other.ID;
     name = other.name;
     city = other.city;
-    country = other.country;
     latitude = other.latitude;
     lontitude = other.lontitude;
 }
@@ -148,7 +133,7 @@ void Airport::copy(const Airport &other)
 string Airport::showAvailibleAirlines(string airlines[])
 {
     string temp = airlines[available_airline[0]];
-    for(int i = 1; i < available_airline.size(); ++i)
+    for(unsigned long i = 1; i < available_airline.size(); ++i)
     {
         temp.append(" or " + airlines[available_airline[i]]);
     }

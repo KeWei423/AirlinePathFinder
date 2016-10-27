@@ -24,8 +24,8 @@ public:
     int getAirportIdFor(string name);
 
 private:
-    void airportDataToXml();
-    void routesDataToXml();
+    bool airportDataToXml();
+    bool routesDataToXml();
     bool insertRoutesIntoAirports();
     void nukem();
 
@@ -38,27 +38,7 @@ private:
     Airport* airports;
 };
 
-
-// ==========================================================================================   OLD FUNCTIONS
-
-//vector<node*> airporList;
-
-void readAirlines(string airlines[], string input)
-{
-    ifstream in(input);
-    char buffer[200], delimiter[2] = {'"', ','}, *airlineID, *name;
-    while(!in.eof())
-    {
-        in.getline(buffer, 200);
-        airlineID = strtok(buffer, delimiter);
-        name = strtok(NULL, delimiter);//company name
-        airlines[atoi(airlineID)] = name;
-    }
-}
-
 #endif // LOADDATA
-// ==========================================================================================   Class FUNCTIONS
-
 
 DataProcessor::DataProcessor(string _airportDataFilename,
                              string _airportXmlFilename,
@@ -124,8 +104,10 @@ Airport *DataProcessor::getAirports()
         lontitude = routeElement.text().toDouble();
         if(latitude && lontitude) {
             airports[id] = Airport(id, IATA, city, latitude, lontitude);
+            airportIATA[IATA] = airportICAO[ICAO] = id;
         }
     }
+    file.close();
     cout << endl << "Airports loaded." << endl;
     return insertRoutesIntoAirports()? airports : NULL;
 }
@@ -153,27 +135,34 @@ int DataProcessor::getAirportIdFor(string name)
     return 0;
 }
 
-void DataProcessor::airportDataToXml()
+bool DataProcessor::airportDataToXml()
 {
     ifstream in(airportDataFilename);
+    if (!in.good()) {
+        cout << airportDataFilename << " can not be open!" << endl;
+        in.close();
+        return false;
+    }
     QFile dest(airportXmlFilename.c_str());
-    if(!dest.open(QIODevice::WriteOnly))
+    if(!dest.open(QIODevice::WriteOnly)) {
         cout << "can not open " << airportXmlFilename << endl;
+    }
     QXmlStreamWriter out(&dest);
     out.setAutoFormatting(true);
     out.writeStartDocument();
 
     char *airportID, *IATA, *ICAO, *city, *latitude, *longitude;
+
     char buffer[200], delimiter[2] = {'"',','};
     out.writeStartElement("vertex");
     while(!in.eof()){
         in.getline(buffer, 200);
-        airportID = strtok (buffer, delimiter);//airportID
-        strtok (NULL, delimiter);//name
-        city = strtok (NULL, delimiter);//city
-        strtok (NULL, delimiter);//Country
-        IATA = strtok (NULL, delimiter);//IATA
-        ICAO = strtok (NULL, delimiter);//ICAO
+        airportID = strtok (buffer, delimiter);
+        strtok (NULL, delimiter);
+        city = strtok (NULL, delimiter);
+        strtok (NULL, delimiter);
+        IATA = strtok (NULL, delimiter);
+        ICAO = strtok (NULL, delimiter);
         latitude = strtok (NULL, delimiter);
         longitude = strtok (NULL, delimiter);
 
@@ -192,36 +181,35 @@ void DataProcessor::airportDataToXml()
 
 }
 
-void DataProcessor::routesDataToXml()
+bool DataProcessor::routesDataToXml()
 {
-    //open files
     ifstream in(routeDataFilename);
-    QFile dest(routeDataFilename.c_str());
-    dest.open(QIODevice::WriteOnly);
+    if (!in.good()) {
+        cout << routeDataFilename << " can not be open!" << endl;
+        in.close();
+        return false;
+    }
+    QFile dest(routeXmlFilename.c_str());
+    if (!dest.open(QIODevice::WriteOnly)) {
+        cout << routeXmlFilename << " can not be open!" << endl;
+    }
     QXmlStreamWriter out(&dest);
-
-    //set up xml
     out.setAutoFormatting(true);
     out.writeStartDocument();
-    out.writeStartElement("routes");
 
-    //buffers
     char buffer[200], delimiter[2] = {'"', ','}, *source, *destination, *airlineID;
 
-    //reading until the end
+    out.writeStartElement("routes");
     while(!in.eof())
     {
-        //read a line
         in.getline(buffer, 200);
-        strtok (buffer, delimiter);//Airline
-        airlineID = strtok (NULL, delimiter);//Airline ID
-        strtok (NULL, delimiter);//Source
-        source = strtok (NULL, delimiter);//Source ID
-        strtok (NULL, delimiter);//Dest
-        destination = strtok (NULL, delimiter);//Dest ID
+        strtok (buffer, delimiter);
+        airlineID = strtok (NULL, delimiter);
+        strtok (NULL, delimiter);
+        source = strtok (NULL, delimiter);
+        strtok (NULL, delimiter);
+        destination = strtok (NULL, delimiter);
 
-        //source
-            //dest
         out.writeStartElement("route");
             out.writeTextElement("source", source);
             out.writeTextElement("dest", destination);
@@ -251,14 +239,10 @@ bool DataProcessor::insertRoutesIntoAirports()
     QDomNodeList routeNodeList = root.elementsByTagName("source");
     QDomNode routeNode;
     QDomElement routeElement;
-    cout << "Reading routes ";
     for(int i = 0; i < routeNodeList.count(); ++i)
     {
-        if (i % 1000 == 0) { cout << i << " "; }
-        //convert to element
         routeNode = routeNodeList.at(i);
         routeElement = routeNode.toElement();
-        //get the text elements
         sourceAirportID = routeElement.text().toShort();
         routeElement = routeElement.nextSiblingElement("dest");
         destinationAirportID = routeElement.text().toShort();
