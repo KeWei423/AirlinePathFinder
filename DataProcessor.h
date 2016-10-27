@@ -1,51 +1,49 @@
 #ifndef LOADDATA
 #define LOADDATA
+#include <fstream>
+#include <iostream>
+#include <map>
 #include <QCoreApplication>
-#include <QXmlStreamWriter>
-#include <QtXml/qdom.h>
 #include <QFile>
 #include <qstring.h>
-#include <iostream>
-#include <fstream>
-#include <stdio.h>
-#include <cstring>
+#include <QtXml/qdom.h>
+#include <QXmlStreamWriter>
 #include "Airport.h"
-
 using namespace std;
-
-struct node{
-    string name;
-    int id;
-};
 
 class DataProcessor {
 public:
+    DataProcessor(string _airportDataFilename ="airports.dat",
+                  string _airportXmlFilename = "airports.xml",
+                  string _routeDataFilename = "routes.dat",
+                  string _routeXmlFilename = "routes.xml");
+    ~DataProcessor();
 
-    DataProcessor(char *_airportDataFilename ="airports.dat",
-                  char *_airportXmlFilename = "airports.xml",
-                  char *_routeDataFilename = "routes.dat",
-                  char *_routeXmlFilename = "routes.xml");
-
-    Airport* getAirports(Airport *list);
+    Airport* getAirports();
     void reloadData();
+    int getAirportIdFor(string name);
 
 private:
     void airportDataToXml();
     void routesDataToXml();
-    void insertRoutesIntoAirports(Airport *list);
+    bool insertRoutesIntoAirports();
+    void nukem();
 
-    char *airportDataFilename;
-    char *airportXmlFilename;
-    char *routeDataFilename;
-    char *routeXmlFilename;
+    string airportDataFilename;
+    string airportXmlFilename;
+    string routeDataFilename;
+    string routeXmlFilename;
+    map<string, int> airportIATA;
+    map<string, int> airportICAO;
+    Airport* airports;
 };
 
 
 // ==========================================================================================   OLD FUNCTIONS
 
-vector<node*> airporList;
+//vector<node*> airporList;
 
-void readAirlines(string airlines[], char *input)
+void readAirlines(string airlines[], string input)
 {
     ifstream in(input);
     char buffer[200], delimiter[2] = {'"', ','}, *airlineID, *name;
@@ -58,84 +56,78 @@ void readAirlines(string airlines[], char *input)
     }
 }
 
-int name2number(string name){
-    int size = airporList.size();
-    for(int i = 0; i < size; ++i)
-        if(airporList[i]->name == name)
-            return airporList[i]->id;
-    return false;
-}
 #endif // LOADDATA
 // ==========================================================================================   Class FUNCTIONS
 
 
-DataProcessor::DataProcessor(char *_airportDataFilename,
-                             char *_airportXmlFilename,
-                             char *_routeDataFilename,
-                             char *_routeXmlFilename)
+DataProcessor::DataProcessor(string _airportDataFilename,
+                             string _airportXmlFilename,
+                             string _routeDataFilename,
+                             string _routeXmlFilename)
 {
     airportDataFilename = _airportDataFilename;
     airportXmlFilename = _airportXmlFilename;
     routeDataFilename = _routeDataFilename;
     routeXmlFilename = _routeXmlFilename;
+    airports = NULL;
 }
 
-Airport *DataProcessor::getAirports(Airport* list)
+DataProcessor::~DataProcessor()
 {
-    node *A;
+    nukem();
+}
+
+
+Airport *DataProcessor::getAirports()
+{
+    QFile file(airportXmlFilename.c_str());
+    if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        cout << airportXmlFilename << " can not be open!" << endl;
+        return NULL;
+    }
+    cout << "Opened " << airportDataFilename << endl;
+    QDomDocument XML;
+    if(!XML.setContent(&file)) {
+        cout << " fail to load content" << endl;
+        return NULL;
+    }
+
     int id;
     double latitude, lontitude;;
     string IATA, city, ICAO;
-
-    //open dom file
-    QDomDocument routesDoc;
-    QFile file(airportXmlFilename);
-    if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
-        cout << "can not open file" << endl;
-    else
+    QDomElement root = XML.firstChildElement();
+    QDomNodeList airportNodeList = root.elementsByTagName("airportID");
+    QDomNode routeNode;
+    QDomElement routeElement;
+    if (airports) {
+        nukem();
+    }
+    airports = new Airport[SIZE];
+    cout << "Reading airport ";
+    for(int i = 0; i < airportNodeList.size(); ++i)
     {
-//        cout << input <<" is opened." << endl;
-        //load file
-        if(!routesDoc.setContent(&file))
-            cout << " fail to load content" << endl;
-        //go to the root
-        QDomElement root = routesDoc.firstChildElement();
-        //put source in to list
-        QDomNodeList airportList = root.elementsByTagName("airportID");
-        QDomNode route;
-        QDomElement element;
-        //for every route
-        for(int i = 0; i < airportList.size(); ++i)
-        {
-            //convert to element
-            route = airportList.at(i);
-            element = route.toElement();
-            //get the text elements
-            id = element.text().toInt();
-            element = element.nextSiblingElement("IATA");
-            IATA = element.text().toStdString();
-            element = element.nextSiblingElement("ICAO");
-            ICAO = element.text().toStdString();
-            element = element.nextSiblingElement("city");
-            city = element.text().toStdString();
-            element = element.nextSiblingElement("latitude");
-            latitude = element.text().toDouble();
-            element = element.nextSiblingElement("longitude");
-            lontitude = element.text().toDouble();
-            if(latitude && lontitude)
-                list[id].set(id, IATA, city, "", latitude, lontitude);
-            A = new node;
-            A->id = id;
-            A->name = IATA;
-            airporList.push_back(A);
-            A = new node;
-            A->id = id;
-            A->name = ICAO;
-            airporList.push_back(A);
+        if (i % 1000 == 0) { cout << i << " "; }
+        //convert to element
+        routeNode = airportNodeList.at(i);
+        routeElement = routeNode.toElement();
+        //get the text elements
+        id = routeElement.text().toInt();
+        routeElement = routeElement.nextSiblingElement("IATA");
+        IATA = routeElement.text().toStdString();
+        routeElement = routeElement.nextSiblingElement("ICAO");
+        ICAO = routeElement.text().toStdString();
+        routeElement = routeElement.nextSiblingElement("city");
+        city = routeElement.text().toStdString();
+        routeElement = routeElement.nextSiblingElement("latitude");
+        latitude = routeElement.text().toDouble();
+        routeElement = routeElement.nextSiblingElement("longitude");
+        lontitude = routeElement.text().toDouble();
+        if(latitude && lontitude) {
+            airports[id] = Airport(id, IATA, city, latitude, lontitude);
         }
     }
-    insertRoutesIntoAirports(list);
-    return list;
+    cout << endl << "Airports loaded." << endl;
+    return insertRoutesIntoAirports()? airports : NULL;
 }
 
 void DataProcessor::reloadData()
@@ -144,10 +136,27 @@ void DataProcessor::reloadData()
     routesDataToXml();
 }
 
+int DataProcessor::getAirportIdFor(string name)
+{
+    for(unsigned long i = 0; i < name.size(); ++i)
+    {
+        name[i] = toupper(name[i]);
+    }
+    map<string, int>::iterator id = airportIATA.find(name);
+    if ( id != airportIATA.end()) {
+        return id->second;
+    }
+    id = airportICAO.find(name);
+    if ( id != airportIATA.end()) {
+        return id->second;
+    }
+    return 0;
+}
+
 void DataProcessor::airportDataToXml()
 {
     ifstream in(airportDataFilename);
-    QFile dest(airportXmlFilename);
+    QFile dest(airportXmlFilename.c_str());
     if(!dest.open(QIODevice::WriteOnly))
         cout << "can not open " << airportXmlFilename << endl;
     QXmlStreamWriter out(&dest);
@@ -187,7 +196,7 @@ void DataProcessor::routesDataToXml()
 {
     //open files
     ifstream in(routeDataFilename);
-    QFile dest(routeDataFilename);
+    QFile dest(routeDataFilename.c_str());
     dest.open(QIODevice::WriteOnly);
     QXmlStreamWriter out(&dest);
 
@@ -224,41 +233,46 @@ void DataProcessor::routesDataToXml()
     in.close();
 }
 
-void DataProcessor::insertRoutesIntoAirports(Airport *list)
+bool DataProcessor::insertRoutesIntoAirports()
 {
-    short source, dest, airlineID;
-    //open dom file
-    QDomDocument routesDoc;
-    QFile file(routeXmlFilename);
-    if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
-        cout << "can not open file" << endl;
-    else
+    QFile file(routeXmlFilename.c_str());
+    if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        cout << routeXmlFilename << " can not be open!" << endl;
+        return false;
+    }
+    cout << "Opened " << routeXmlFilename << endl;
+    QDomDocument XML;
+    if(!XML.setContent(&file)) {
+        cout << "Fail to load content in " << routeXmlFilename << endl;
+    }
+
+    short sourceAirportID, destinationAirportID, airlineID;
+    QDomElement root = XML.firstChildElement();
+    QDomNodeList routeNodeList = root.elementsByTagName("source");
+    QDomNode routeNode;
+    QDomElement routeElement;
+    cout << "Reading routes ";
+    for(int i = 0; i < routeNodeList.count(); ++i)
     {
-        //load file
-        if(!routesDoc.setContent(&file))
-            cout << "fail to load" << endl;
-
-        //go to the root
-        QDomElement root = routesDoc.firstChildElement();
-        //put source in to list
-        QDomNodeList routes = root.elementsByTagName("source");
-        QDomNode route;
-        QDomElement routeElement;
-        //for every route
-        for(int i = 0; i < routes.count(); ++i)
-        {
-            //convert to element
-            route = routes.at(i);
-            routeElement = route.toElement();
-            //get the text elements
-            source = routeElement.text().toShort();
-            routeElement = routeElement.nextSiblingElement("dest");
-            dest = routeElement.text().toShort();
-            routeElement = routeElement.nextSiblingElement("airlineID");
-            airlineID = routeElement.text().toShort();
-            if(source && dest)
-                list[source].addDestination(dest, list[source].getDistanceTo(list[dest]), airlineID);
-
+        if (i % 1000 == 0) { cout << i << " "; }
+        //convert to element
+        routeNode = routeNodeList.at(i);
+        routeElement = routeNode.toElement();
+        //get the text elements
+        sourceAirportID = routeElement.text().toShort();
+        routeElement = routeElement.nextSiblingElement("dest");
+        destinationAirportID = routeElement.text().toShort();
+        routeElement = routeElement.nextSiblingElement("airlineID");
+        airlineID = routeElement.text().toShort();
+        if(sourceAirportID && destinationAirportID) {
+            int distance = airports[sourceAirportID].getDistanceTo(airports[destinationAirportID]);
+            airports[sourceAirportID].addDestination(destinationAirportID, distance, airlineID);
         }
     }
+    cout << endl << "Routes loaded." << endl;
+}
+
+void DataProcessor::nukem()
+{
+    delete airports;
 }
