@@ -23,13 +23,13 @@ public:
     int getDistanceTo(Airport dest);
     string getAirportInfo();
     void addDestination(int airportID, int getDistanceTo, int _ID);
-
+    string getAirportName();
     void operator =(const Airport& other);
+    vector<int> getAvailableDestinationAirports();
 
 
     // TODO: clean up needed functions
     string showAvailibleAirlines(string airlines[]);
-    string getAirportName();
     void to(int i, int &d, int &id, int &airID);
     int& from();
     void theAirID(int id);
@@ -72,6 +72,12 @@ Airport::Airport(int _id, string _name, string _city, double _latitude, double _
 void Airport::operator =(const Airport &other)
 {
     copy(other);
+}
+
+vector<int> Airport::getAvailableDestinationAirports()
+{
+    cout << "Number of availiable airports:" << destinationAirports.size() << endl;
+    return destinationAirports;
 }
 
 void Airport::addDestination(int airportID, int _distance, int _ID)

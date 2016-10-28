@@ -57,7 +57,6 @@ DataProcessor::~DataProcessor()
     nukem();
 }
 
-
 Airport *DataProcessor::getAirports()
 {
     QFile file(airportXmlFilename.c_str());
@@ -84,9 +83,10 @@ Airport *DataProcessor::getAirports()
     }
     airports = new Airport[SIZE];
     cout << "Reading airport ";
+    int counter = 0;
     for(int i = 0; i < airportNodeList.size(); ++i)
     {
-        if (i % 1000 == 0) { cout << i << " "; }
+        ++counter;
         //convert to element
         routeNode = airportNodeList.at(i);
         routeElement = routeNode.toElement();
@@ -107,6 +107,7 @@ Airport *DataProcessor::getAirports()
             airportIATA[IATA] = airportICAO[ICAO] = id;
         }
     }
+    cout << counter << " airports were loaded." << endl;
     file.close();
     cout << endl << "Airports loaded." << endl;
     return insertRoutesIntoAirports()? airports : NULL;
@@ -114,8 +115,13 @@ Airport *DataProcessor::getAirports()
 
 void DataProcessor::reloadData()
 {
+    cout << "Converting data to xml." << endl;
     airportDataToXml();
     routesDataToXml();
+//    if (airports[3484] != NULL)
+//        cout << "LAX dest: " << airports[3484].getAvailableDestinationAirports().size() << endl;
+//    if (airports[3797] != NULL)
+//        cout << "JFK dest: " << airports[3797].getAvailableDestinationAirports().size() << endl;
 }
 
 int DataProcessor::getAirportIdFor(string name)
@@ -146,6 +152,7 @@ bool DataProcessor::airportDataToXml()
     QFile dest(airportXmlFilename.c_str());
     if(!dest.open(QIODevice::WriteOnly)) {
         cout << "can not open " << airportXmlFilename << endl;
+        return false;
     }
     QXmlStreamWriter out(&dest);
     out.setAutoFormatting(true);
@@ -178,7 +185,7 @@ bool DataProcessor::airportDataToXml()
     out.writeEndDocument();
     dest.close();
     in.close();
-
+    return true;
 }
 
 bool DataProcessor::routesDataToXml()
@@ -192,6 +199,7 @@ bool DataProcessor::routesDataToXml()
     QFile dest(routeXmlFilename.c_str());
     if (!dest.open(QIODevice::WriteOnly)) {
         cout << routeXmlFilename << " can not be open!" << endl;
+        return false;
     }
     QXmlStreamWriter out(&dest);
     out.setAutoFormatting(true);
@@ -219,6 +227,7 @@ bool DataProcessor::routesDataToXml()
     out.writeEndElement();
     dest.close();
     in.close();
+    return true;
 }
 
 bool DataProcessor::insertRoutesIntoAirports()
@@ -232,13 +241,14 @@ bool DataProcessor::insertRoutesIntoAirports()
     QDomDocument XML;
     if(!XML.setContent(&file)) {
         cout << "Fail to load content in " << routeXmlFilename << endl;
+        return false;
     }
-
     short sourceAirportID, destinationAirportID, airlineID;
     QDomElement root = XML.firstChildElement();
     QDomNodeList routeNodeList = root.elementsByTagName("source");
     QDomNode routeNode;
     QDomElement routeElement;
+    int counter = 0;
     for(int i = 0; i < routeNodeList.count(); ++i)
     {
         routeNode = routeNodeList.at(i);
@@ -249,11 +259,13 @@ bool DataProcessor::insertRoutesIntoAirports()
         routeElement = routeElement.nextSiblingElement("airlineID");
         airlineID = routeElement.text().toShort();
         if(sourceAirportID && destinationAirportID) {
+            ++counter;
             int distance = airports[sourceAirportID].getDistanceTo(airports[destinationAirportID]);
             airports[sourceAirportID].addDestination(destinationAirportID, distance, airlineID);
         }
     }
-    cout << endl << "Routes loaded." << endl;
+    cout << counter << " routes were loaded." << endl;
+    return true;
 }
 
 void DataProcessor::nukem()
