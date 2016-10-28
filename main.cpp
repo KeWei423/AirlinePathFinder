@@ -3,8 +3,12 @@
 
 using namespace std;
 
+void testDataProcessor();
+
+
 int main()
 {
+    /*
     PathFinder pf;
     string from, to;
 
@@ -20,5 +24,30 @@ int main()
         cout << "======================================" << endl;
         pf.findPath(from, to);
     }
+    */
+
+    testDataProcessor();
+
+
     return 0;
+}
+
+
+void testDataProcessor() {
+    DataProcessor dp;
+
+    dp.convertData();
+
+    Airport** airports = dp.getAirports();
+
+    for (int i = 0; i < SIZE; i++) {
+        cout << i << " ";
+        if (airports[i]) {
+            cout << airports[i]->getAirportName() << endl;
+        } else {
+            cout << "Empty" << endl;
+        }
+
+    }
+
 }

@@ -17,7 +17,8 @@ public:
 
 private:
     DataProcessor dp;
-    Airport* airports;
+    Airport** airports;
+    map<int, vector<int>> routes;
     string airlines[TOTAL_AIRLINES] = {};
 };
 
@@ -25,60 +26,74 @@ private:
 
 PathFinder::PathFinder()
 {
-    dp.reloadData();
+    dp.convertData();
     airports = dp.getAirports();
-
-    for(int i = 0; i < SIZE; i++) {
-        cout << airports[i].getAvailableDestinationAirports().size() << endl;
-    }
-
+    routes = dp.getRoutes();
 }
 
 void PathFinder::findPath(int from, int to)
 {
+    while (!airports) {
+        dp.convertData();
+        airports = dp.getAirports();
+    }
+
     int currentAirport = from;
     int distanceToCurrentAirport = 0;
     map<int, int> visitedAirportDistance; // { airportId: distance }
     map<int, int> fromWhichAirport; // { destinationAirport: fromAirport }
-    while (currentAirport != to) {
+    while (currentAirport != to)
+    {
+        visitedAirportDistance[currentAirport] = MAX_DISTANCE;
+//        cout << visitedAirportDistance << " Destinations" << endl;
+//        for (map<int, int>::iterator id = visitedAirportDistance.begin(); id != visitedAirportDistance.end(); id++) {
+//            cout << "Visited:" << endl;
+//            cout << "    " << id->first << endl;
+//            if (airports[id->first]) {
+//                cout << "    -" << airports[id->first]->getAirportName() << endl;
+//            }
+//        }
+
         // find airports that reachable from current airport
-        Airport airport = airports[currentAirport];
-        cout << "Current Airport name:" << airport.getAirportName() << endl;
-        vector<int> availableDestinationAirports = airport.getAvailableDestinationAirports();
+        vector<int> availableDestinationAirports = routes[currentAirport];
+        cout << availableDestinationAirports.size() << " Airports availiable." << endl;
+        // find distance to every destination airports
+//        for (vector<int>::iterator at = availableDestinationAirports.begin(); at != availableDestinationAirports.end(); at)
+//        {
+//            cout << "    airprot #" << *at << endl;
+//            // go through all the airports and put shortest distance in the map
+//            Airport* A = airports[currentAirport];
+//            if (!A) {
+//                cout << "Airprot A is NULL" << endl;
+//                break;
+//            } else {
+//                cout << "Airprot A is GOOD" << endl;
+//            }
 
-        cout << "received: " << availableDestinationAirports.size() << endl;
+//            Airport* B = airports[*at];
+//            if (!B) {
+//                cout << "Airprot B is NULL" << endl;
+//                break;
+//            } else {
+//                cout << "Airprot B is GOOD" << endl;
+//            }
 
-        for(unsigned long availiableAirportIndex = 0;
-            availiableAirportIndex < availableDestinationAirports.size();
-            availiableAirportIndex++)
-        {
-            // go through all the airports and put shortest distance in the map
-            int distanceToNewAirport = airports[currentAirport].getDistanceTo(
-                        airports[availableDestinationAirports[availiableAirportIndex]])
-                    + distanceToCurrentAirport;
 
-            // find the destination airport int the map
-            map<int, int>::iterator found = visitedAirportDistance.find(
-                        availableDestinationAirports[availiableAirportIndex]);
-            // if already existed, campare and keep only the shortest distance to the airport
-            if (found->second != MAX_DISTANCE) {
-                if (found != visitedAirportDistance.end()) {
-                    // found this airport in visited
-                    int preDistanceToHere = found->second;
-                    visitedAirportDistance[availableDestinationAirports[availiableAirportIndex]]
-                            = (preDistanceToHere < distanceToNewAirport) ? preDistanceToHere : distanceToNewAirport;
-                }
-                // else insert the distance with airportId as key
-                else {
-                    // can not found the airport in visited
-                    visitedAirportDistance[availableDestinationAirports[availiableAirportIndex]] = distanceToNewAirport;
-                }
-            }
-        }
-        cout << "DEST COUNT " << currentAirport << " - " << availableDestinationAirports.size() << endl;
+//            int distance = A->getDistanceTo(*B);
+//            cout << "got distance" << endl;
+//            int distanceToDestinationAirport = distance + distanceToCurrentAirport;
+
+//            cout << A->getAirportName()
+//                 << " -> " << B->getAirportName()
+//                 << " = " << distanceToCurrentAirport
+//                 << " + " << distance << endl;
+
+//        }
+//        cout << " recored all distance!" << endl;
+        break;
 
         // find the min in the visitedAirport
-        int minDistance = MAX_DISTANCE, minAirportId = -1;
+        int minDistance = MAX_DISTANCE, minAirportId = 0;
         for (map<int, int>::iterator walker = visitedAirportDistance.begin();
              walker != visitedAirportDistance.end(); walker++)
         {
@@ -87,15 +102,14 @@ void PathFinder::findPath(int from, int to)
                 minDistance = walker->second;
             }
         }
-        if (minAirportId == -1) {
+        if (minAirportId == 0) {
             cout << "No more destinations." << endl;
             return;
         }
 
-        cout << "from " << airports[currentAirport].getAirportName()
-             << " to " << airports[minAirportId].getAirportName()
+        cout << "from " << airports[currentAirport]->getAirportName()
+             << " to " << airports[minAirportId]->getAirportName()
              << " : " << minDistance << endl;
-        visitedAirportDistance[currentAirport] = MAX_DISTANCE;
         fromWhichAirport[minAirportId] = currentAirport;
         currentAirport = minAirportId;
         distanceToCurrentAirport = minDistance;
@@ -118,8 +132,10 @@ void PathFinder::findPath(string from, string to)
 //    oldFindPath(start, end);
 }
 
+
 void PathFinder::oldFindPath(int start, int end)
 {
+    /*
     int minDistance[SIZE], visited[SIZE];
     int d, id, pre, airlineID, holder = start;
     int nextVisit = start, minD;
@@ -180,4 +196,5 @@ void PathFinder::oldFindPath(int start, int end)
     }
     cout << "Arrive  at " << airports[route[0]].getAirportInfo();
     cout << endl << endl;
+    */
 }

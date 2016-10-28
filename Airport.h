@@ -27,13 +27,6 @@ public:
     void operator =(const Airport& other);
     vector<int> getAvailableDestinationAirports();
 
-
-    // TODO: clean up needed functions
-    string showAvailibleAirlines(string airlines[]);
-    void to(int i, int &d, int &id, int &airID);
-    int& from();
-    void theAirID(int id);
-
 private:
     void copy(const Airport& other);
 
@@ -76,22 +69,25 @@ void Airport::operator =(const Airport &other)
 
 vector<int> Airport::getAvailableDestinationAirports()
 {
-    cout << "Number of availiable airports:" << destinationAirports.size() << endl;
     return destinationAirports;
 }
 
 void Airport::addDestination(int airportID, int _distance, int _ID)
 {
     destinationAirports.push_back(airportID);
+    cout << getAirportName() << " => " << destinationAirports.size() << endl;
     distance.push_back(_distance);
     airlineID.push_back(_ID);
 }
 
 int Airport::getDistanceTo(Airport dest)
 {
-    return EARTH_RADIUS
+    double distance = EARTH_RADIUS
            * acos(sin(latitude*PI/180)*sin( dest.latitude*PI/180 )
                 + cos( latitude*PI/180 )*cos( dest.latitude*PI/180 )*cos( abs(dest.lontitude-lontitude) * PI/180) ) ;
+//    cout << getAirportInfo() << " -> " << dest.getAirportInfo() << endl;
+    cout << "(" << distance << ")";
+    return distance;
 }
 
 string Airport::getAirportInfo()
@@ -104,29 +100,6 @@ int Airport::getDestinationCount()
     return destinationAirports.size();
 }
 
-void Airport::to(int i, int &d, int &id, int &_airID)
-{
-    id = destinationAirports[i];
-    d = distance[i];
-    _airID = airlineID[i];
-}
-
-int& Airport::from()
-{
-    return shortest;
-}
-
-void Airport::theAirID(int id)
-{
-    if(preShortest!=shortest){
-        available_airline.clear();
-        preShortest = shortest;
-    }
-    if(available_airline.size()>1 && available_airline[0] == id)
-        return;
-    available_airline.push_back(id);
-}
-
 void Airport::copy(const Airport &other)
 {
     ID = other.ID;
@@ -134,16 +107,6 @@ void Airport::copy(const Airport &other)
     city = other.city;
     latitude = other.latitude;
     lontitude = other.lontitude;
-}
-
-string Airport::showAvailibleAirlines(string airlines[])
-{
-    string temp = airlines[available_airline[0]];
-    for(unsigned long i = 1; i < available_airline.size(); ++i)
-    {
-        temp.append(" or " + airlines[available_airline[i]]);
-    }
-    return temp;
 }
 
 string Airport::getAirportName()
