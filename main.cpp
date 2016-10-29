@@ -35,19 +35,14 @@ int main()
 
 void testDataProcessor() {
     DataProcessor dp;
-
     dp.convertData();
-
     Airport** airports = dp.getAirports();
-
+    int counter = 0;
     for (int i = 0; i < SIZE; i++) {
-        cout << i << " ";
-        if (airports[i]) {
-            cout << airports[i]->getAirportName() << endl;
-        } else {
-            cout << "Empty" << endl;
-        }
-
+        counter += airports[i] ? 1 : 0;
     }
-
+    cout << "Airport Count: " << counter << endl;
+    if (counter = 8099) {
+        cout << "Number of Airport checked." << endl;
+    }
 }

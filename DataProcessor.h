@@ -197,6 +197,7 @@ bool DataProcessor::airportDataToXml()
     char *airportID, *IATA, *ICAO, *city, *latitude, *longitude;
 
     char buffer[200], delimiter[2] = {'"',','};
+//    char buffer[200], delimiter[] = {','};
     out.writeStartElement("vertex");
     while(!in.eof()){
         in.getline(buffer, 200);
@@ -217,6 +218,12 @@ bool DataProcessor::airportDataToXml()
             out.writeTextElement("latitude", latitude);
             out.writeTextElement("longitude", longitude);
         out.writeEndElement();
+        airportID = NULL;
+        city = NULL;
+        IATA = NULL;
+        ICAO = NULL;
+        latitude = NULL;
+        longitude = NULL;
     }
     out.writeEndDocument();
     dest.close();
@@ -260,6 +267,9 @@ bool DataProcessor::routesDataToXml()
             out.writeTextElement("dest", destination);
             out.writeTextElement("airlineID", airlineID);
         out.writeEndElement();
+        airlineID = NULL;
+        source = NULL;
+        destination = NULL;
     }
     out.writeEndElement();
     dest.close();
