@@ -1,10 +1,9 @@
 #include <iostream>
-#include "PathFinder.h"
+
+#include "DataProcessorTester.h"
+#include "PathFinderTester.h"
 
 using namespace std;
-
-void testDataProcessor();
-
 
 int main()
 {
@@ -26,23 +25,11 @@ int main()
     }
     */
 
-    testDataProcessor();
+//    DataProcessorTester dpTester;
+//    dpTester.run();
 
+    PathFinderTester pfTester;
+    pfTester.run();
 
     return 0;
-}
-
-
-void testDataProcessor() {
-    DataProcessor dp;
-    dp.convertData();
-    Airport** airports = dp.getAirports();
-    int counter = 0;
-    for (int i = 0; i < SIZE; i++) {
-        counter += airports[i] ? 1 : 0;
-    }
-    cout << "Airport Count: " << counter << endl;
-    if (counter = 8099) {
-        cout << "Number of Airport checked." << endl;
-    }
 }

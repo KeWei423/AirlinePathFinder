@@ -86,7 +86,7 @@ int Airport::getDistanceTo(Airport dest)
            * acos(sin(latitude*PI/180)*sin( dest.latitude*PI/180 )
                 + cos( latitude*PI/180 )*cos( dest.latitude*PI/180 )*cos( abs(dest.lontitude-lontitude) * PI/180) ) ;
 //    cout << getAirportInfo() << " -> " << dest.getAirportInfo() << endl;
-    cout << "(" << distance << ")";
+//    cout << "(" << distance << ")";
     return distance;
 }
 
