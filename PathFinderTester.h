@@ -26,17 +26,18 @@ PathFinderTester::PathFinderTester()
 bool PathFinderTester::run()
 {
     testFindPath();
+    return true;
 }
 
 bool PathFinderTester::testFindPath()
 {
-    pf.findPath("LAX", "JFK");
-    pf.findPath("LAX", "SIN");
+//    pf.findPath("LAX", "JFK");
+//    pf.findPath("JFK", "LAX");
 //    pf.findPath("LAX", "YHU");
 //    pf.findPath("LAX", "YPL");
 //    pf.findPath("LAX", "YSJ");
 //    pf.findPath("LAX", "YXE");
-//    pf.findPath("LAX", "TIN");
+    pf.findPath("LAX", "TIN");
 //    pf.findPath("LAX", "ANR");
 //    pf.findPath("LAX", "KAO");
 //    pf.findPath("LAX", "EDI");
@@ -46,4 +47,6 @@ bool PathFinderTester::testFindPath()
 //    pf.findPath("LAX", "KLR");
 //    pf.findPath("LAX", "BBT");
 //    pf.findPath("LAX", "LUO");
+
+    return true;
 }
