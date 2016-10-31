@@ -14,8 +14,6 @@ private:
 
 };
 
-
-
 #endif // PATHFINDERTEST_H
 
 PathFinderTester::PathFinderTester()
@@ -31,22 +29,19 @@ bool PathFinderTester::run()
 
 bool PathFinderTester::testFindPath()
 {
-//    pf.findPath("LAX", "JFK");
-//    pf.findPath("JFK", "LAX");
-//    pf.findPath("LAX", "YHU");
-//    pf.findPath("LAX", "YPL");
-//    pf.findPath("LAX", "YSJ");
-//    pf.findPath("LAX", "YXE");
-    pf.findPath("LAX", "TIN");
-//    pf.findPath("LAX", "ANR");
-//    pf.findPath("LAX", "KAO");
-//    pf.findPath("LAX", "EDI");
-//    pf.findPath("LAX", "NTB");
-//    pf.findPath("LAX", "GOT");
-//    pf.findPath("LAX", "JKG");
-//    pf.findPath("LAX", "KLR");
-//    pf.findPath("LAX", "BBT");
-//    pf.findPath("LAX", "LUO");
+    pf.findPath("LAX", "JFK");
+    pf.findPath("JFK", "LAX");
+    pf.findPath("LAX", "YHU");
+    pf.findPath("LAX", "YPL");
+    pf.findPath("LAX", "YSJ");
+    pf.findPath("LAX", "YXE");
+    pf.findPath("LAX", "ANR");
+    pf.findPath("LAX", "KAO");
+    pf.findPath("LAX", "EDI");
+    pf.findPath("LAX", "GOT");
+    pf.findPath("LAX", "JKG");
+    pf.findPath("LAX", "KLR");
+    pf.findPath("LAX", "LUO");
 
     return true;
 }

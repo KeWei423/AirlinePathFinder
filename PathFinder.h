@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include "DataProcessor.h"
+#include "Trip.h"
+
 using namespace std;
 
 class PathFinder {
@@ -19,6 +21,7 @@ private:
     void clearPath();
     void updateDistanceTable(int currentAirportId, int distanceToCurrentAirport);
     bool findMinDistanceAirport(int &minAirportId, int &minDistance);
+    void showPath(int from, int to);
 
     DataProcessor dp;
     Airport** airports;
@@ -60,6 +63,9 @@ void PathFinder::findPath(int from, int to)
     }
 
     cout << "Path is found!!!" << endl;
+//    cout << "DEBUG D" << endl;
+    showPath(from, to);
+//    cout << "DEBUG E" << endl;
 }
 
 void PathFinder::findPath(string from, string to)
@@ -141,4 +147,18 @@ bool PathFinder::findMinDistanceAirport(int & minAirportId, int &minDistance)
     }
 //    cout << "DEBUG B.4" << endl;
     return true;
+}
+
+void PathFinder::showPath(int from, int to)
+{
+    Trip trip;
+//    cout << "DEBUG E.1" << endl;
+    int temp;
+    for (int at = to; at != from; at = cameFrom[at]) {
+        Flight flight(*airports[cameFrom[at]], *airports[at]);
+        trip.insertFlight(flight);
+        temp = at;
+    }
+//    cout << "DEBUG E.2" << endl;
+    trip.showTrip();
 }
