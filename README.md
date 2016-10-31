@@ -1,6 +1,6 @@
 # Airline Shortest Path Finder
 
-### Using Dijkstra'a algorithm to find the "shortest path" between any two airports.
+### Using Dijkstra'a algorithm to find the shortest path between any two airports.
 
 ~~~~
 
