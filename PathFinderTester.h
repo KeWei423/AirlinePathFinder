@@ -8,10 +8,8 @@ public:
     bool run();
     bool testFindPath();
 
-
 private:
     PathFinder pf;
-
 };
 
 #endif // PATHFINDERTEST_H
@@ -42,6 +40,5 @@ bool PathFinderTester::testFindPath()
     pf.findPath("LAX", "JKG");
     pf.findPath("LAX", "KLR");
     pf.findPath("LAX", "LUO");
-
     return true;
 }

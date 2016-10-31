@@ -55,7 +55,7 @@ DataProcessor::DataProcessor(string _airportDataFilename,
 
 DataProcessor::~DataProcessor()
 {
-//    nukem();
+    nukem();
 }
 
 Airport **DataProcessor::getAirports(bool refresh)
@@ -69,7 +69,6 @@ Airport **DataProcessor::getAirports(bool refresh)
         cout << airportXmlFilename << " can not be open!" << endl;
         return airports;
     }
-    cout << "Opened " << airportXmlFilename << endl;
     QDomDocument XML;
     if(!XML.setContent(&file)) {
         cout << " fail to load content" << endl;
@@ -109,7 +108,6 @@ Airport **DataProcessor::getAirports(bool refresh)
         }
     }
     file.close();
-    cout << "Airports loaded." << endl;
     return airports;
 }
 
@@ -133,13 +131,11 @@ int DataProcessor::getAirportIdFor(string name)
 const map<int, vector<int> > DataProcessor::getRoutes()
 {
     map<int, vector<int> > routes;
-
     QFile file(routeXmlFilename.c_str());
     if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         cout << routeXmlFilename << " can not be open!" << endl;
         return routes;
     }
-    cout << "Opened " << routeXmlFilename << endl;
     QDomDocument XML;
     if(!XML.setContent(&file)) {
         cout << "Fail to load content in " << routeXmlFilename << endl;
@@ -166,16 +162,13 @@ const map<int, vector<int> > DataProcessor::getRoutes()
             routes[sourceAirportID].push_back(destinationAirportID);
         }
     }
-    cout << counter << " routes were loaded." << endl;
     return routes;
 }
 
 void DataProcessor::convertData()
 {
-    cout << "Converting data to xml." << endl;
     airportDataToXml();
     routesDataToXml();
-    cout << "Done converting data." << endl;
 }
 
 bool DataProcessor::airportDataToXml()

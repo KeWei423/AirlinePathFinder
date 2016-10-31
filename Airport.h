@@ -6,46 +6,37 @@
 #include <string>
 #include <vector>
 
-const double EARTH_RADIUS = 3959;// (6,371 km)
+const double EARTH_RADIUS = 3959; // (6,371 km)
 const double PI = 3.1415926;
 const int SIZE = 9542;
-const double MAX_DISTANCE = 2 * PI * EARTH_RADIUS;
-const int TOTAL_AIRLINES = 19846;
 
 using namespace std;
 class Airport{
 public:
     Airport();
     Airport(const Airport& other);
-    Airport(int _id, string _name, string _city, double _latitude, double _lontitude);
+    Airport(int _id, string _name, string _city, double _latitude, double _longtitude);
 
-    int getDestinationCount();
     int getDistanceTo(Airport dest);
     string getAirportInfo();
-    void addDestination(int airportID, int getDistanceTo, int _ID);
     string getAirportName();
     void operator =(const Airport& other);
-    vector<int> getAvailableDestinationAirports();
+
+    friend
+    bool operator ==(const Airport& LHS, const Airport& RHS);
 
 private:
     void copy(const Airport& other);
 
     int ID;
     string name, city;
-    double latitude, lontitude;
-    //edges
-    vector<int> destinationAirports;
-    vector<int> distance;
-    vector<int> airlineID;
-
-    //shortest distance and available airlines
-    int shortest, preShortest;
-    vector<int> available_airline;
+    double latitude, longtitude;
 };
 
 Airport::Airport()
 {
-    shortest = preShortest = ID = 0;
+    name = city = "Not Initialized";
+    latitude = longtitude = 0;
 }
 
 Airport::Airport(const Airport &other)
@@ -53,13 +44,13 @@ Airport::Airport(const Airport &other)
     copy(other);
 }
 
-Airport::Airport(int _id, string _name, string _city, double _latitude, double _lontitude)
+Airport::Airport(int _id, string _name, string _city, double _latitude, double _longtitude)
 {
     ID = _id;
     name = _name;
     city = _city;
     latitude = _latitude;
-    lontitude = _lontitude;
+    longtitude = _longtitude;
 }
 
 void Airport::operator =(const Airport &other)
@@ -67,26 +58,15 @@ void Airport::operator =(const Airport &other)
     copy(other);
 }
 
-vector<int> Airport::getAvailableDestinationAirports()
-{
-    return destinationAirports;
-}
-
-void Airport::addDestination(int airportID, int _distance, int _ID)
-{
-    destinationAirports.push_back(airportID);
-    cout << getAirportName() << " => " << destinationAirports.size() << endl;
-    distance.push_back(_distance);
-    airlineID.push_back(_ID);
-}
-
 int Airport::getDistanceTo(Airport dest)
 {
-    double distance = EARTH_RADIUS
-           * acos(sin(latitude*PI/180)*sin( dest.latitude*PI/180 )
-                + cos( latitude*PI/180 )*cos( dest.latitude*PI/180 )*cos( abs(dest.lontitude-lontitude) * PI/180) ) ;
-//    cout << getAirportInfo() << " -> " << dest.getAirportInfo() << endl;
-//    cout << "(" << distance << ")";
+    double distance =
+            EARTH_RADIUS
+            * acos(sin(latitude*PI/180)
+                   * sin( dest.latitude*PI/180 )
+                   + cos( latitude*PI/180 )
+                   * cos( dest.latitude*PI/180 )
+                   * cos( abs(dest.longtitude-longtitude) * PI/180) ) ;
     return distance;
 }
 
@@ -95,23 +75,28 @@ string Airport::getAirportInfo()
     return name + "(" + city+ ")";
 }
 
-int Airport::getDestinationCount()
-{
-    return destinationAirports.size();
-}
-
 void Airport::copy(const Airport &other)
 {
     ID = other.ID;
     name = other.name;
     city = other.city;
     latitude = other.latitude;
-    lontitude = other.lontitude;
+    longtitude = other.longtitude;
 }
 
 string Airport::getAirportName()
 {
     return name;
+}
+
+
+bool operator ==(const Airport &LHS, const Airport &RHS)
+{
+    return LHS.ID == RHS.ID &&
+            LHS.name == RHS.name &&
+            LHS.city == RHS.city &&
+            LHS.latitude == RHS.latitude &&
+            LHS.longtitude == RHS.longtitude;
 }
 
 #endif // AIRPORT

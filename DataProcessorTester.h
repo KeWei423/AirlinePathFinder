@@ -1,5 +1,5 @@
-#ifndef TEST_H
-#define TEST_H
+#ifndef DATAPROCESSORTEST_H
+#define DATAPROCESSORTEST_H
 
 #include "DataProcessor.h"
 
@@ -14,9 +14,6 @@ public:
 private:
     DataProcessor dp;
 };
-
-#endif // TEST_H
-
 
 DataProcessorTester::DataProcessorTester()
 {
@@ -56,3 +53,4 @@ bool DataProcessorTester::testGetRoutes()
         cout << destinations.size() << " destinations" << endl;
     }
 }
+#endif // DATAPROCESSORTEST_H
