@@ -8,12 +8,19 @@ class Trip
 {
 public:
     Trip();
+    Trip(const Trip& other);
     Trip(string _from, string _to);
 
     void insertFlight(Flight flight);
     void showTrip();
+    void operator =(const Trip& other);
+
+    friend
+    bool operator ==(const Trip& LHS, const Trip& RHS);
 
 private:
+    void copy(const Trip& other);
+
     stack<Flight> flights;
     string from, to;
 };
@@ -21,6 +28,11 @@ private:
 Trip::Trip()
 {
     from = to = "Unknown";
+}
+
+Trip::Trip(const Trip &other)
+{
+    copy(other);
 }
 
 Trip::Trip(string _from, string _to)
@@ -52,6 +64,20 @@ void Trip::showTrip()
         cout << "There is no route avaliable from " << from << " to " << to << endl;
     }
     cout << endl << endl;
+}
+
+void Trip::operator =(const Trip &other)
+{
+    copy(other);
+}
+
+void Trip::copy(const Trip &other)
+{
+    if (this != &other) {
+        from = other.from;
+        to = other.to;
+        flights = other.flights;
+    }
 }
 
 #endif // TRIP_H

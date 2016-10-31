@@ -1,0 +1,44 @@
+======================================
+Enter 0 to quit the program.
+Pleace enter SOURCE airport name(LAX):
+LAX
+Pleace enter DESTINATION:
+JFK
+======================================
+Non-stop trip:
+From LAX(Los Angeles) to JFK(New York)
+
+
+======================================
+Enter 0 to quit the program.
+Pleace enter SOURCE airport name(LAX):
+JKG
+Pleace enter DESTINATION:
+LAX
+======================================
+Trip from JKG(Joenkoeping) to LAX(Los Angeles) required 2 flights:
+    #1: From JKG(Joenkoeping) to ARN(Stockholm)
+    #2: From ARN(Stockholm) to LAX(Los Angeles)
+
+
+======================================
+Enter 0 to quit the program.
+Pleace enter SOURCE airport name(LAX):
+LAX
+Pleace enter DESTINATION:
+GOT
+======================================
+Trip from LAX(Los Angeles) to GOT(Gothenborg) required 6 flights:
+    #1: From LAX(Los Angeles) to YYC(Calgary)
+    #2: From YYC(Calgary) to YEG(Edmonton)
+    #3: From YEG(Edmonton) to KEF(Keflavik)
+    #4: From KEF(Keflavik) to BGO(Bergen)
+    #5: From BGO(Bergen) to SVG(Stavanger)
+    #6: From SVG(Stavanger) to GOT(Gothenborg)
+
+
+======================================
+Enter 0 to quit the program.
+Pleace enter SOURCE airport name(LAX):
+0
+Press <RETURN> to close this window...

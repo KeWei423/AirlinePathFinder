@@ -7,7 +7,13 @@ using namespace std;
 
 int main()
 {
-    /*
+//    DataProcessorTester dpTester;
+//    dpTester.run();
+
+//    PathFinderTester pfTester;
+//    pfTester.run();
+
+
     PathFinder pf;
     string from, to;
 
@@ -23,13 +29,6 @@ int main()
         cout << "======================================" << endl;
         pf.findPath(from, to);
     }
-    */
-
-//    DataProcessorTester dpTester;
-//    dpTester.run();
-
-    PathFinderTester pfTester;
-    pfTester.run();
 
     return 0;
 }

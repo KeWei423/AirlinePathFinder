@@ -98,7 +98,7 @@ bool PathFinder::findMinDistanceAirport(int & minAirportId, int &minDistance)
 {
     // find the min in the visited Airport
     map<int, int>::iterator walker = distanceTo.begin();
-    minAirportId = NOT_FOUND, minDistance;
+    minAirportId = NOT_FOUND;
     while (walker != distanceTo.end() && distanceTo[walker->first] == VISITED) {
         walker++;
     }

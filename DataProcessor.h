@@ -270,7 +270,6 @@ bool DataProcessor::routesDataToXml()
     return true;
 }
 
-
 void DataProcessor::nukem()
 {
     if (!airports) {
