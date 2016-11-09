@@ -13,10 +13,9 @@ int main()
 //    PathFinderTester pfTester;
 //    pfTester.run();
 
-
     PathFinder pf;
     string from, to;
-
+    system("clear");
     while( true ) {
         cout << "======================================" << endl
              << "Enter 0 to quit the program.          " << endl
@@ -29,6 +28,7 @@ int main()
         cout << "======================================" << endl;
         pf.findPath(from, to);
     }
+
 
     return 0;
 }

@@ -1,6 +1,6 @@
 #ifndef FLIGHT_H
 #define FLIGHT_H
-
+#include <iomanip>
 #include "Airport.h"
 
 class Flight {
@@ -8,7 +8,7 @@ public:
     Flight();
     Flight(const Flight& other);
     Flight(Airport _from, Airport _to);
-    void showFlightDetail();
+    int showFlightDetail();
     void operator =(const Flight& other);
 
     friend
@@ -36,9 +36,13 @@ Flight::Flight(Airport _from, Airport _to)
     to = _to;
 }
 
-void Flight::showFlightDetail()
+int Flight::showFlightDetail()
 {
-    cout << "From " << from.getAirportInfo() << " to " << to.getAirportInfo() << endl;
+    int distance = from.getDistanceTo(to);
+    cout << "From " << from.getAirportInfo()
+         << " to " << to.getAirportInfo()
+         << " " << setw(7) << distance << " miles."<< endl;
+    return distance;
 }
 
 void Flight::operator =(const Flight &other)

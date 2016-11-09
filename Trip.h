@@ -48,22 +48,24 @@ void Trip::insertFlight(Flight flight)
 
 void Trip::showTrip()
 {
+    int distanceSum = 0;
     if (flights.size() > 1) {
         int counter = 1;
         cout << "Trip from " << from << " to " << to << " required " << flights.size() << " flights:" << endl;
         while(!flights.empty()) {
             cout << "    #" << counter++ << ": ";
-            flights.top().showFlightDetail();
+            distanceSum += flights.top().showFlightDetail();
             flights.pop();
         }
     } else if (flights.size() == 1) {
         cout << "Non-stop trip:" << endl;
-        flights.top().showFlightDetail();
+        distanceSum += flights.top().showFlightDetail();
         flights.pop();
     } else {
         cout << "There is no route avaliable from " << from << " to " << to << endl;
+        return;
     }
-    cout << endl << endl;
+    cout << "Total disrance for this trip is " << distanceSum << " miles."<< endl << endl;
 }
 
 void Trip::operator =(const Trip &other)
